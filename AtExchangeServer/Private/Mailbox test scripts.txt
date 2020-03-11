@@ -1,0 +1,36 @@
+$mailboxes | foreach { Get-User $_ | select FirstName, LastName, DisplayName, WindowsEmailAddress } | export-csv -NoTypeInformation .\Mailboxes.csv -Delimiter ";" -Encoding unicode
+
+$mailboxes | foreach { Get-User $_ | select FirstName, LastName, DisplayName, WindowsEmailAddress } | export-csv -NoTypeInformation .\Mailboxes.csv -Delimiter ";" -Encoding unicode
+
+$recipients = Get-Recipient
+/* limits to only 1000 above, by design */
+
+Get-Mailbox -Anr Chr
+/* This example returns all the mailboxes that resolve from the ambiguous name resolution search on the string "Chr". */
+/* This example returns mailboxes for users such as Chris Ashton, Christian Hess, and Christa Geller. */
+
+Get-Mailbox -Anr Aaron
+--
+<#$UserCredential = (Get-Credential amtrustservices\atrocano)
+$Session = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri http://cle-mail04.amtrustservices.com/PowerShell/ -Authentication Kerberos -Credential $UserCredential
+Import-PSSession $Session -AllowClobber #>
+
+<# Get-Mailbox -Identity "Ryan Adcox" | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+<# Get-Mailbox -Identity "George Secara" | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+<# Get-Mailbox -filter {UserPrincipalName -ne $null} | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+
+Get-Mailbox -ResultSize Unlimited -filter {ForwardingSmtpAddress -ne $null -and UserPrincipalName -like "*@amtrustgroup.com" -and ForwardingSmtpAddress -like "*@ownerguard*"} `
+| Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward 
+<# Get-Mailbox -ResultSize Unlimited -filter {ForwardingSmtpAddress -ne $null -and UserPrincipalName -like "*@amtrustgroup.com"} | `
+Where-Object {$_.ForwardingSmtpAddress -like "*@ownerguard*"} | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+<# Get-Mailbox -ResultSize Unlimited -filter {ForwardingSmtpAddress -ne $null} | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+<# Get-Mailbox -ResultSize Unlimited -filter {ForwardingSmtpAddress -ne $null} | Select-Object DisplayName, UserPrincipalName, ForwardingAddress, ForwardingSmtpAddress, DeliverToMailboxAndForward #>
+<# Get-Mailbox | Where-Object {$_.ForwardingSmtpAddress -ne $null} | Select-Object DisplayName, UserPrincipalName, DeliverToMailboxAndForward #>
+
+<#Get-Mailbox -ResultSize Unlimited -RecipientTypeDetails UserMailbox,SharedMailbox | Get-MailboxStatistics | Sort-Object lastlogontime -Descending | Select-Object DisplayName, LastLogonTime #>
+
+<#Get-Mailbox -Anr Aaron | Select-Object DisplayName, UserPrincipalName
+Get-Mailbox -Anr Ryan | Select-Object DisplayName, UserPrincipalName
+Get-Mailbox -Identity aaron.trocano@amtrustgroup.com | Select-Object DisplayName, UserPrincipalName
+Get-Mailbox -Identity ryan.adcox@amtrustgroup.com | Select-Object DisplayName, UserPrincipalName #>
+--
